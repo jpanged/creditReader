@@ -10,7 +10,6 @@
 # "/images" folder.
 
 # Import libraries
-import config
 import io
 import os
 import re
@@ -24,7 +23,8 @@ def main(): # Uncomment the function you want to use (local vs cloud storage)
     try:
         # For local images
         img_path = os.path.join(path[0], 'images/' + argv[1])
-        detect_text(img_path)
+        out_path = os.path.join(path[0], 'output/' + argv[2])
+        detect_text(img_path, out_path)
 
         # For images hosted on Cloud Storage Bucket
         #detect_text_uri('gs://' + config.CLOUD_STORAGE_BUCKET + '/' + argv[1])
@@ -44,7 +44,7 @@ def detect_text_uri(uri):
     texts = response.text_annotations
 
     # Prep file for writing
-    outFile = open('out.txt', 'w+')
+    outFile = open(argv[2], 'w+')
 
     # Traverse detected text and only save valid codes
     prev = ''
@@ -61,7 +61,7 @@ def detect_text_uri(uri):
 
 
 # For local images
-def detect_text(path):
+def detect_text(path, out):
     """Detects text in the file."""
     client = vision.ImageAnnotatorClient()
 
@@ -74,7 +74,7 @@ def detect_text(path):
     texts = response.text_annotations
 
     # Prep file for writing
-    outFile = open(argv[2], 'w+')
+    outFile = open(out, 'w+')
 
     # Traverse detected text and only save valid codes
     prev = ''
