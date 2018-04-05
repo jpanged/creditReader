@@ -1,6 +1,7 @@
 # Project: Google Cloud Credit Code Reader
 # Author: Josiah Pang
 # Spring 2018
+#
 # This program takes images of GCP Credits and outputs their individual unique
 # codes. It was written to help Student Innovators track credit activations.
 # It can either take local images or images hosted on a Google Cloud Storage
@@ -28,7 +29,7 @@ def main(): # Uncomment the function you want to use (local vs cloud storage)
         # For images hosted on Cloud Storage Bucket
         #detect_text_uri('gs://' + config.CLOUD_STORAGE_BUCKET + '/' + argv[1])
     except:
-        print("Usage: python read.py IMAGE_NAME")
+        print("Usage: python read.py IMAGE_NAME OUTPUT.txt")
 
 
 # For remote images
@@ -73,7 +74,7 @@ def detect_text(path):
     texts = response.text_annotations
 
     # Prep file for writing
-    outFile = open('out.txt', 'w+')
+    outFile = open(argv[2], 'w+')
 
     # Traverse detected text and only save valid codes
     prev = ''
@@ -81,6 +82,11 @@ def detect_text(path):
     for text in texts:
         cur = '{}'.format(text.description)
         if re.match(pattern, cur): # Use regex to identify code
+            # Check to see if O instead of 0
+            for char in range(len(cur)):
+                if cur[char] == "O":
+                    #cur[char] = "0"
+                    cur = cur[:char] + "0" + cur[char + 1:]
             print(cur)
             outFile.write(cur + '\n')
         prev = cur
